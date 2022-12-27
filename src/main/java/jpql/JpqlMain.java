@@ -19,36 +19,27 @@ public class JpqlMain {
             team.setName("PC");
             em.persist(team);
 
-            //상품 정보 생성
-            Product product = new Product();
-            product.setName("마우스");
-            product.setPrice(1000);
-            product.setStockAmount(999);
-            em.persist(product);
-
             //멤버 정보 생성
             Member member1 = new Member();
             member1.setUserName("member1");
             member1.changeTeam(team);
+            member1.setType(MemberType.ADMIN);
             em.persist(member1);
 
-            //주문 정보 생성
-            Order order = new Order();
-            //주문자
-            order.setMember(member1);
-            //배송지 정보
-            order.setAddress(new Address("hwa", "sang", "81"));
-            //물품 정보
-            order.setProduct(product);
-            em.persist(order);
 
 
-            TypedQuery<Member> query = em.createQuery("select m from Member m", Member.class);
 
-            List<Member> resultList = query.getResultList();
-            Member singleResult = query.getSingleResult();
+
+            String query = "select m from Member m " +
+                    "where m.type = :userType";
+            List<Member> resultList = em.createQuery(query, Member.class)
+                    .setParameter("userType", MemberType.ADMIN)
+                    .setFirstResult(0)
+                    .setMaxResults(10)
+                    .getResultList();
+
             for (Member member : resultList) {
-                System.out.println("member = " + member.getUserName());
+                System.out.println("member : " + member);
             }
 
 
